@@ -1,3 +1,30 @@
+/* -------- TASK ZK -------- */
+/* Savol */
+/*
+  Shunday function yozing, u har soniyada bir marta
+  consolega 1 dan 5 gacha bolgan raqamlarni chop etsin va 
+  5 soniyadan keyin ishini toxtatsin.
+
+  MASALAN: printNumbers()
+*/
+
+/* YECHIM */
+function printNumbers(): void {
+  let current: number = 1;
+
+  const timer = setInterval(() => {
+    console.log(current);
+
+    if (current === 5) {
+      clearInterval(timer);
+    }
+
+    current++;
+  }, 1000);
+}
+
+printNumbers();
+
 /* -------- TASK ZJ -------- */
 /* Savol */
 
@@ -11,7 +38,7 @@
 
 /* YECHIM */
 
-function reduceNestedArray(arr: any[]): number {
+/* function reduceNestedArray(arr: any[]): number {
   return arr.reduce((acc, val) => {
     if (Array.isArray(val)) {
       return acc + reduceNestedArray(val);
@@ -22,4 +49,4 @@ function reduceNestedArray(arr: any[]): number {
 
 const result = reduceNestedArray([1, [1, 2, [4]]]);
 
-console.log('result:', result);
+console.log('result:', result); */
