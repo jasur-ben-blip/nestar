@@ -31,7 +31,6 @@ export class MemberService {
 
   public async login(input: LoginInput): Promise<Member> {
     const { memberNick, memberPassword } = input;
-
     const response: Member | null = await this.memberModel
       .findOne({ memberNick: memberNick })
       .select('+memberPassword')
@@ -39,21 +38,17 @@ export class MemberService {
 
     if (!response || response.memberStatus === MemberStatus.DELETE) {
       throw new InternalServerErrorException(Messages.NO_MEMBER_NICK);
-    } else if (response.memberStatus !== MemberStatus.BLOCK) {
+    } else if (response.memberStatus === MemberStatus.BLOCK) {
       throw new InternalServerErrorException(Messages.BLOCKED_USERS);
     }
 
-    // TODO : Compare Passwords
-
-    console.log('response:', response);
-
+    //// TODO Compare passwords
     const isMatch = memberPassword === response.memberPassword;
     if (!isMatch)
       throw new InternalServerErrorException(Messages.WRONG_PASSWORD);
 
     return response;
   }
-
   public async updateMember(): Promise<string> {
     return 'updateMember executed';
   }
