@@ -9,21 +9,21 @@
 */
 
 /* YECHIM */
-function printNumbers(): void {
-  let current: number = 1;
+// function printNumbers(): void {
+//   let current: number = 1;
 
-  const timer = setInterval(() => {
-    console.log(current);
+//   const timer = setInterval(() => {
+//     console.log(current);
 
-    if (current === 5) {
-      clearInterval(timer);
-    }
+//     if (current === 5) {
+//       clearInterval(timer);
+//     }
 
-    current++;
-  }, 1000);
-}
+//     current++;
+//   }, 1000);
+// }
 
-printNumbers();
+// printNumbers();
 
 /* -------- TASK ZJ -------- */
 /* Savol */
