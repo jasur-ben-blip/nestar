@@ -39,7 +39,7 @@ export class MemberService {
 
     if (!response || response.memberStatus === MemberStatus.DELETE) {
       throw new InternalServerErrorException(Messages.NO_MEMBER_NICK);
-    } else if (response.memberStatus === MemberStatus.BLOCK) {
+    } else if (response.memberStatus !== MemberStatus.BLOCK) {
       throw new InternalServerErrorException(Messages.BLOCKED_USERS);
     }
 
