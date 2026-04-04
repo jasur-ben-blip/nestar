@@ -5,7 +5,7 @@ import {
   MemberType,
 } from '../libs/enums/member.enum';
 
-const MembeSchema = new Schema(
+const MemberSchema = new Schema(
   {
     memberType: {
       type: String,
@@ -122,4 +122,4 @@ const MembeSchema = new Schema(
   { timestamps: true, collection: 'members' },
 );
 
-export default MembeSchema;
+export default MemberSchema;
