@@ -13,7 +13,7 @@ import { Messages } from '../../libs/enums/command.enum';
 @Injectable()
 export class MemberService {
   constructor(
-    @InjectModel('Member') private readonly memberModel: Model<null>,
+    @InjectModel('Member') private readonly memberModel: Model<Member>,
   ) {}
 
   public async signup(input: MemberInput): Promise<Member> {
@@ -32,10 +32,10 @@ export class MemberService {
   public async login(input: LoginInput): Promise<Member> {
     const { memberNick, memberPassword } = input;
 
-    const response: Member = (await this.memberModel
+    const response: Member | null = await this.memberModel
       .findOne({ memberNick: memberNick })
       .select('+memberPassword')
-      .exec()) as unknown as Member;
+      .exec();
 
     if (!response || response.memberStatus === MemberStatus.DELETE) {
       throw new InternalServerErrorException(Messages.NO_MEMBER_NICK);
