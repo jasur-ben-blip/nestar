@@ -11,12 +11,13 @@ import { T } from './libs/types/command';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot(), //enviromental variables
     GraphQLModule.forRoot({
       driver: ApolloDriver,
       playground: true,
       uploads: false,
       autoSchemaFile: true,
+      // Global error handling
       formatError: (error: T) => {
         const graphQLFormattedError = {
           code: error?.extensions.code,

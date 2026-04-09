@@ -9,15 +9,20 @@ import { Member } from '../../libs/dto/member/member';
 import { LoginInput, MemberInput } from '../../libs/dto/member/member.input';
 import { MemberStatus } from '../../libs/enums/member.enum';
 import { Messages } from '../../libs/enums/command.enum';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class MemberService {
   constructor(
     @InjectModel('Member') private readonly memberModel: Model<Member>,
+    private authService: AuthService,
   ) {}
 
   public async signup(input: MemberInput): Promise<Member> {
     // TODO: Hash Password
+    input.memberPassword = await this.authService.hashPassword(
+      input.memberPassword,
+    );
 
     try {
       const result = await this.memberModel.create(input);
@@ -42,8 +47,11 @@ export class MemberService {
       throw new InternalServerErrorException(Messages.BLOCKED_USERS);
     }
 
-    //// TODO Compare passwords
-    const isMatch = memberPassword === response.memberPassword;
+    //// TODO Compare passwords ////
+    const isMatch = await this.authService.comparePassword(
+      input.memberPassword,
+      response.memberPassword!,
+    );
     if (!isMatch)
       throw new InternalServerErrorException(Messages.WRONG_PASSWORD);
 
