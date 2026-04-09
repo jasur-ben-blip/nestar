@@ -12,7 +12,7 @@ export enum Messages {
   BLOCKED_USERS = 'You have been blocked',
   WRONG_PASSWORD = 'Wrong password, try again',
   NOT_AUTHENTICATED = 'You are not authenticated, please login first',
-  TOKENT_NOT_EXIST = 'Bearer Token is not provided',
+  TOKEN_NOT_EXIST = 'Bearer Token is not provided',
   ONLY_SPECIFIC_ROLES_ALLOWED = 'Allowed only for members with specific roles',
   NOT_ALLOWED_REQUEST = 'Not Allowed Request',
   PROVIDE_ALLOWED_FORMAT = 'Please provide JPG, JPEG, or PNG images',
