@@ -9,6 +9,7 @@ import * as mongoose from 'mongoose';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { MemberType } from '../../libs/enums/member.enum';
 import { RolesGuard } from '../auth/guards/roles.guard';
+import { MemberUpdate } from '../../libs/dto/member/member.update';
 
 @Resolver()
 export class MemberResolver {
@@ -26,19 +27,9 @@ export class MemberResolver {
     return await this.memberService.login(input);
   }
 
-  @UseGuards(AuthGuard) // Authenticated
-  @Mutation(() => String)
-  public async updateMember(
-    @AuthMember('_id') memberId: mongoose.ObjectId,
-  ): Promise<string> {
-    console.log('MUTATION: updateMember');
-    console.log(memberId);
-    return await this.memberService.updateMember();
-  }
-
   //// TEST ////
 
-  @UseGuards(RolesGuard)
+  @UseGuards(AuthGuard)
   @Query(() => String)
   public async checkAuth(
     @AuthMember('memberNick') memberNick: string,
@@ -59,6 +50,17 @@ export class MemberResolver {
   }
 
   ////
+
+  @UseGuards(AuthGuard) // Authenticated
+  @Mutation(() => Member)
+  public async updateMember(
+    @Args('input') input: MemberUpdate,
+    @AuthMember('_id') memberId: mongoose.ObjectId,
+  ): Promise<Member> {
+    console.log('MUTATION: updateMember');
+    delete input._id;
+    return await this.memberService.updateMember(memberId, input);
+  }
 
   @Query(() => String)
   public async getMember(): Promise<string> {

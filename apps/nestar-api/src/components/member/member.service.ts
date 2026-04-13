@@ -4,12 +4,13 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, ObjectId } from 'mongoose';
 import { Member } from '../../libs/dto/member/member';
 import { LoginInput, MemberInput } from '../../libs/dto/member/member.input';
 import { MemberStatus } from '../../libs/enums/member.enum';
 import { Messages } from '../../libs/enums/command.enum';
 import { AuthService } from '../auth/auth.service';
+import { MemberUpdate } from '../../libs/dto/member/member.update';
 
 @Injectable()
 export class MemberService {
@@ -19,14 +20,14 @@ export class MemberService {
   ) {}
 
   public async signup(input: MemberInput): Promise<Member> {
-    // TODO: Hash Password
+    //  Hash Password
     input.memberPassword = await this.authService.hashPassword(
       input.memberPassword,
     );
 
     try {
       const result = await this.memberModel.create(input);
-      //TODO : Authentication via TOKEN
+      // Authentication via TOKEN
       result.accessToken = await this.authService.createToken(result);
 
       return result;
@@ -38,7 +39,7 @@ export class MemberService {
 
   public async login(input: LoginInput): Promise<Member> {
     const { memberNick, memberPassword } = input;
-    const response: Member | null = await this.memberModel
+    const response: Member = await this.memberModel
       .findOne({ memberNick: memberNick })
       .select('+memberPassword')
       .exec();
@@ -49,7 +50,7 @@ export class MemberService {
       throw new InternalServerErrorException(Messages.BLOCKED_USERS);
     }
 
-    //// TODO Compare passwords ////
+    ////  Compare passwords ////
     const isMatch = await this.authService.comparePassword(
       input.memberPassword,
       response.memberPassword!,
@@ -61,8 +62,24 @@ export class MemberService {
 
     return response;
   }
-  public async updateMember(): Promise<string> {
-    return 'updateMember executed';
+  public async updateMember(
+    memberId: ObjectId,
+    input: MemberUpdate,
+  ): Promise<Member> {
+    const result: Member = await this.memberModel
+      .findOneAndUpdate(
+        {
+          _id: memberId,
+          memberStatus: MemberStatus.ACTIVE,
+        },
+        input,
+        { new: true },
+      )
+      .exec();
+    if (!result) throw new InternalServerErrorException(Messages.UPDATE_FAILED);
+
+    result.accessToken = await this.authService.createToken(result);
+    return result;
   }
 
   public async getMember(): Promise<string> {
