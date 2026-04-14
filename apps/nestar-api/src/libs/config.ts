@@ -2,10 +2,16 @@ import { ObjectId } from 'bson';
 
 export const availableAgentSorts = [
   'createdAt',
-  'updatedAt',
+  'updateAt',
   'memberLikes',
   'memberViews',
   'memberRank',
+];
+export const availableMemberSorts = [
+  'createdAt',
+  'updateAt',
+  'memberLikes',
+  'memberViews',
 ];
 
 export const shapeIntoMongoObjectId = (target: any) => {

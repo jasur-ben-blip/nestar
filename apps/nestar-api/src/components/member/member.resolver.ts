@@ -4,6 +4,7 @@ import {
   AgentsInquiry,
   LoginInput,
   MemberInput,
+  MembersInquiry,
 } from '../../libs/dto/member/member.input';
 import { Member, Members } from '../../libs/dto/member/member';
 import { UseGuards } from '@nestjs/common';
@@ -93,14 +94,21 @@ export class MemberResolver {
 
   @Roles(MemberType.ADMIN)
   @UseGuards(RolesGuard)
-  @Mutation(() => String)
-  public async getAllMembersByAdmin(): Promise<string> {
-    return this.memberService.getAllMembersByAdmin();
+  @Query(() => Members)
+  public async getAllMembersByAdmin(
+    @Args('input') input: MembersInquiry,
+  ): Promise<Members> {
+    console.log('Query: getAllMembersByAdmin');
+    return await this.memberService.getAllMembersByAdmin(input);
   }
 
-  @Mutation(() => String)
-  public async updateMemberByAdmin(): Promise<string> {
+  @Roles(MemberType.ADMIN)
+  @UseGuards(RolesGuard)
+  @Mutation(() => Member)
+  public async updateMemberByAdmin(
+    @Args('input') input: MemberUpdate,
+  ): Promise<Member> {
     console.log('Mutation: updateMemberByAdmin');
-    return this.memberService.updateMemberByAdmin();
+    return await this.memberService.updateMemberByAdmin(input);
   }
 }
