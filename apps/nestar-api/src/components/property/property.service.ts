@@ -19,6 +19,7 @@ import { PropertyStatus } from '../../libs/enums/property.enum';
 import { ViewGroup } from '../../libs/enums/view.enum';
 import { ViewService } from '../view/view.service';
 import moment from 'moment';
+// import * as momnet from 'mongoose';
 import { PropertyUpdate } from '../../libs/dto/property/property.update';
 import { lookupMember, shapeIntoMongoObjectId } from '../../libs/config';
 
@@ -316,6 +317,23 @@ export class PropertyService {
         modifier: -1,
       });
     }
+
+    return result;
+  }
+
+  public async removePropertyByAdmin(propertyId: ObjectId): Promise<Property> {
+    const search: T = {
+      _id: propertyId,
+      propertyStatus: PropertyStatus.DELETE,
+    };
+    const result = await this.propertyModel.findOneAndDelete(search).exec();
+    if (!result) throw new InternalServerErrorException(Messages.REMOVE_FAILED);
+
+    await this.memberService.memberStatsEditor({
+      _id: result.memberId,
+      targetKey: 'memberProperties',
+      modifier: -1,
+    });
 
     return result;
   }
