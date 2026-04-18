@@ -1,16 +1,25 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, ObjectId } from 'mongoose';
 import { Property } from '../../libs/dto/property/property';
 import { Messages } from '../../libs/enums/command.enum';
 import { PropertyInput } from '../../libs/dto/property/member.input';
 import { MemberService } from '../member/member.service';
+import { StatisticModifier, T } from '../../libs/types/command';
+import { PropertyStatus } from '../../libs/enums/property.enum';
+import { ViewGroup } from '../../libs/enums/view.enum';
+import { ViewService } from '../view/view.service';
 
 @Injectable()
 export class PropertyService {
   constructor(
     @InjectModel('Property') private readonly propertyModel: Model<Property>,
     private memberService: MemberService,
+    private viewService: ViewService,
   ) {}
 
   public async createProperty(input: PropertyInput): Promise<Property> {
@@ -27,5 +36,65 @@ export class PropertyService {
       console.log('Error Property service', err.message);
       throw new BadRequestException(Messages.CREATE_FAILED);
     }
+  }
+
+  public async getProperty(
+    memberId: ObjectId,
+    propertyId: ObjectId,
+  ): Promise<Property> {
+    const search: T = {
+      _id: propertyId,
+      propertyStatus: PropertyStatus.ACTIVE,
+    };
+
+    const targetProperty: Property = await this.propertyModel
+      .findOne(search)
+      .lean() // targetProperty modify qilish uchun
+      .exec();
+    if (!targetProperty)
+      throw new InternalServerErrorException(Messages.NO_DATA_FOUND);
+
+    if (memberId) {
+      // auth member bolsa ishga tushadigan mantiq
+      const viewInput = {
+        memberId: memberId,
+        viewRefId: propertyId,
+        viewGroup: ViewGroup.PROPERTY,
+      };
+      const newView = await this.viewService.recordView(viewInput);
+      if (newView) {
+        await this.propertyStatsEditor({
+          _id: propertyId,
+          targetKey: 'propertyViews',
+          modifier: 1,
+        });
+        targetProperty.propertyViews++;
+      }
+
+      // meLiked
+      //mefollowed
+    }
+
+    targetProperty.memberData = await this.memberService.getMember(
+      null,
+      targetProperty.memberId,
+    );
+    return targetProperty;
+  }
+
+  public async propertyStatsEditor(
+    // propertyni statistic data yangilash uchun
+    input: StatisticModifier,
+  ): Promise<Property> {
+    const { _id, targetKey, modifier } = input;
+    return await this.propertyModel
+      .findByIdAndUpdate(
+        _id,
+        {
+          $inc: { [targetKey]: modifier },
+        },
+        { new: true },
+      )
+      .exec();
   }
 }
