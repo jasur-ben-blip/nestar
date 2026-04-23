@@ -15,7 +15,7 @@ import {
   BoardArticles,
 } from '../../libs/dto/board-article/board-article';
 import { shapeIntoMongoObjectId } from '../../libs/config';
-import { ObjectId } from 'mongoose';
+import mongoose, { ObjectId } from 'mongoose';
 
 import { Roles } from '../auth/decorators/roles.decorator';
 import { MemberType } from '../../libs/enums/member.enum';
@@ -65,6 +65,22 @@ export class BoardArticleResolver {
   ): Promise<BoardArticles> {
     console.log('Query: getBoardArticles');
     return await this.boardArticleService.getBoardArticles(memberId, input);
+  }
+
+  /** LIKE **/
+
+  @UseGuards(AuthGuard)
+  @Mutation(() => BoardArticle)
+  public async likeTargeBoardArticle(
+    @Args('articleId') input: string,
+    @AuthMember('_id') memberId: mongoose.ObjectId,
+  ): Promise<BoardArticle> {
+    console.log('Mutation: likeTargeBoardArticle');
+    const likeRefId = shapeIntoMongoObjectId(input);
+    return await this.boardArticleService.likeTargeBoardArticle(
+      memberId,
+      likeRefId,
+    );
   }
 
   /** ADMIN **/
