@@ -88,7 +88,16 @@ export class BoardArticleService {
         targetBoardArticle.articleViews++;
       }
 
-      // meLiked
+      /** MEE-LIKED **/
+      const likeInput = {
+        memberId: memberId,
+        likeRefId: articleId,
+        likeGroup: LikeGroup.ARTICLE,
+      };
+      targetBoardArticle.meLiked =
+        await this.likeService.checkLikeExistance(likeInput);
+
+      /** MEE-FOLLOWED **/
     }
 
     targetBoardArticle.memberData = await this.memberService.getMember(

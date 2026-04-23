@@ -75,6 +75,7 @@ export class MemberService {
 
     return response;
   }
+
   public async updateMember(
     memberId: ObjectId,
     input: MemberUpdate,
@@ -124,6 +125,16 @@ export class MemberService {
           .exec();
         targetMember.memberViews++;
       }
+      /** MEE-LIKED **/
+      const likeInput = {
+        memberId: memberId,
+        likeRefId: targetId,
+        likeGroup: LikeGroup.MEMBER,
+      };
+      targetMember.meLiked =
+        await this.likeService.checkLikeExistance(likeInput);
+
+      /** MEE-FOLLOWED **/
     }
 
     return targetMember;
