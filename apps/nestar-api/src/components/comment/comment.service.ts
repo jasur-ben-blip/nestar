@@ -17,7 +17,7 @@ import { CommentGroup, CommentStatus } from '../../libs/enums/comment.enum';
 import { Comment, Comments } from '../../libs/dto/comment/comment';
 import { CommentUpdate } from '../../libs/dto/comment/comment.update';
 import { lookupMember } from '../../libs/config';
-import { T } from '../../libs/types/command';
+import { T } from '../../libs/types/common';
 
 @Injectable()
 export class CommentService {

@@ -14,7 +14,7 @@ import {
   PropertyInput,
 } from '../../libs/dto/property/property.input';
 import { MemberService } from '../member/member.service';
-import { StatisticModifier, T } from '../../libs/types/command';
+import { StatisticModifier, T } from '../../libs/types/common';
 import { PropertyStatus } from '../../libs/enums/property.enum';
 import { ViewGroup } from '../../libs/enums/view.enum';
 import { ViewService } from '../view/view.service';
