@@ -8,7 +8,6 @@ import { AppResolver } from './app.resolver';
 import { ComponentsModule } from './components/components.module';
 import { DatabaseModule } from './database/database.module';
 import { T } from './libs/types/command';
-import { ViewService } from './components/view/view.service';
 
 @Module({
   imports: [
