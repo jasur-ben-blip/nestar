@@ -21,7 +21,11 @@ import { ViewService } from '../view/view.service';
 import moment from 'moment';
 // import * as momnet from 'mongoose';
 import { PropertyUpdate } from '../../libs/dto/property/property.update';
-import { lookupMember, shapeIntoMongoObjectId } from '../../libs/config';
+import {
+  lookupAuthMemberLiked,
+  lookupMember,
+  shapeIntoMongoObjectId,
+} from '../../libs/config';
 import { LikeService } from '../like/like.service';
 import { LikeInput } from '../../libs/dto/like/like.input';
 import { LikeGroup } from '../../libs/enums/like.enum';
@@ -92,8 +96,6 @@ export class PropertyService {
       };
       targetProperty.meLiked =
         await this.likeService.checkLikeExistance(likeInput);
-
-      /** MEE-FOLLOWED **/
     }
 
     targetProperty.memberData = await this.memberService.getMember(
@@ -173,7 +175,8 @@ export class PropertyService {
             list: [
               { $skip: (input.page - 1) * input.limit },
               { $limit: input.limit },
-              // meLiked
+              /** ME-LIKED **/
+              lookupAuthMemberLiked(memberId),
               lookupMember,
               { $unwind: '$memberData' }, // [memberData] => memberdata
             ],
