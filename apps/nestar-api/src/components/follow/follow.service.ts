@@ -16,6 +16,7 @@ import { Direction, Messages } from '../../libs/enums/command.enum';
 import { FollowInquiry } from '../../libs/dto/follow/follow.input';
 import { T } from '../../libs/types/common';
 import {
+  lookupAuthMemberFollowed,
   lookupAuthMemberLiked,
   lookupFollowerData,
   lookupFollowingData,
@@ -121,7 +122,10 @@ export class FollowService {
               { $skip: (page - 1) * limit },
               { $limit: limit },
               lookupAuthMemberLiked(memberId, '$followingId'), //me liked
-              // meFollowed
+              lookupAuthMemberFollowed({
+                followerId: memberId,
+                followingId: '$followingId',
+              }), // meFollowed
               lookupFollowingData,
               { $unwind: '$followingData' },
             ],
@@ -158,7 +162,10 @@ export class FollowService {
               { $skip: (page - 1) * limit },
               { $limit: limit },
               lookupAuthMemberLiked(memberId, '$followerId'), //me liked
-              // meFollowed
+              lookupAuthMemberFollowed({
+                followerId: memberId,
+                followingId: '$followerId',
+              }), // meFollowed
               lookupFollowerData,
               { $unwind: '$followerData' },
             ],
