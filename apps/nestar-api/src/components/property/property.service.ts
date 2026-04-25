@@ -238,6 +238,13 @@ export class PropertyService {
     return this.likeService.getFavoriteProperties(memberId, input);
   }
 
+  public async getVisited(
+    memberId: ObjectId,
+    input: OrdinaryInquiry,
+  ): Promise<Properties> {
+    return this.viewService.getVisitedProperties(memberId, input);
+  }
+
   public async getAgentProperties(
     memberId: ObjectId,
     input: AgentPropertiesInquiry,
