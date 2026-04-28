@@ -1,17 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NestarBatchController } from './nestar-batch.controller';
-import { NestarBatchService } from './nestar-batch.service';
+import { BatchController } from './batch.controller';
+import { BatchService } from './batch.service';
 
 describe('NestarBatchController', () => {
-  let nestarBatchController: NestarBatchController;
+  let nestarBatchController: BatchController;
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
-      controllers: [NestarBatchController],
-      providers: [NestarBatchService],
+      controllers: [BatchController],
+      providers: [BatchService],
     }).compile();
 
-    nestarBatchController = app.get<NestarBatchController>(NestarBatchController);
+    nestarBatchController = app.get<BatchController>(BatchController);
   });
 
   describe('root', () => {
