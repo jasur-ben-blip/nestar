@@ -75,17 +75,19 @@ export class CommentService {
     input: CommentUpdate,
   ): Promise<Comment> {
     const { _id } = input;
-    const result = await this.commentModel.findOneAndUpdate(
-      {
-        _id: _id,
-        memberId: memberId,
-        commentStatus: CommentStatus.ACTIVE,
-      },
-      input,
-      {
-        new: true,
-      },
-    );
+    const result = await this.commentModel
+      .findOneAndUpdate(
+        {
+          _id: _id,
+          memberId: memberId,
+          commentStatus: CommentStatus.ACTIVE,
+        },
+        input,
+        {
+          new: true,
+        },
+      )
+      .exec();
 
     if (!result) throw new InternalServerErrorException(Messages.UPDATE_FAILED);
     return result;
@@ -104,22 +106,24 @@ export class CommentService {
       [input?.sort ?? 'createdAt']: input?.direction ?? Direction.DESC,
     };
 
-    const result: Comments[] = await this.commentModel.aggregate([
-      { $match: match },
-      { $sort: sort },
-      {
-        $facet: {
-          list: [
-            { $skip: (input.page - 1) * input.limit },
-            { $limit: input.limit },
-            // meLiked
-            lookupMember,
-            { $unwind: '$memberData' },
-          ],
-          metaCounter: [{ $count: 'total' }],
+    const result: Comments[] = await this.commentModel
+      .aggregate([
+        { $match: match },
+        { $sort: sort },
+        {
+          $facet: {
+            list: [
+              { $skip: (input.page - 1) * input.limit },
+              { $limit: input.limit },
+              // meLiked
+              lookupMember,
+              { $unwind: '$memberData' },
+            ],
+            metaCounter: [{ $count: 'total' }],
+          },
         },
-      },
-    ]);
+      ])
+      .exec();
 
     if (!result.length)
       throw new InternalServerErrorException(Messages.NO_DATA_FOUND);
@@ -129,7 +133,7 @@ export class CommentService {
 
   /** ADMIN **/
   public async removeCommentByAdmin(input: ObjectId): Promise<Comment> {
-    const result = await this.commentModel.findByIdAndDelete(input);
+    const result = await this.commentModel.findByIdAndDelete(input).exec();
     if (!result) throw new InternalServerErrorException(Messages.REMOVE_FAILED);
 
     return result;
